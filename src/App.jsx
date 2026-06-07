@@ -66,6 +66,7 @@ const STYLES = `
   .meta-label { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface-overlay); border: 1px solid var(--accent-green); border-radius: var(--radius-md); padding: 14px 20px; font-size: 14px; color: var(--text-primary); z-index: 2000; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; }
   @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .legal-content * { text-align: left !important; }
 `;
 
 function Toast({ message, onDone }) {
@@ -418,6 +419,264 @@ function UploadModal({ onClose, onUpload, currentUser, onToast }) {
   );
 }
 
+const EFFECTIVE_DATE = "7 June 2025";
+const CONTACT_EMAIL = "lorely.help@gmail.com";
+
+function LegalPage({ title, label, children }) {
+  return (
+    <div style={{ flex: 1, overflowY: "auto", padding: "48px 60px" }}>
+      <span className="section-label" style={{ textAlign: "left", display: "block" }}>{label}</span>
+      <h1 style={{ fontSize: 36, marginBottom: 8, textAlign: "left" }}>{title}</h1>
+      <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 40, fontFamily: "var(--font-body)", textAlign: "left" }}>Effective date: {EFFECTIVE_DATE} · Lorely is operated by Aigenix, Western Australia, Australia</p>
+      <div style={{ maxWidth: 720, fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.9, fontFamily: "var(--font-body)", textAlign: "left" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function LegalSection({ title, children }) {
+  return (
+    <div style={{ marginBottom: 36, textAlign: "left" }}>
+      <h2 style={{ fontSize: 18, marginBottom: 12, color: "var(--text-primary)", fontFamily: "var(--font-display)", textAlign: "left" }}>{title}</h2>
+      <div style={{ color: "var(--text-secondary)", lineHeight: 1.9, textAlign: "left" }}>{children}</div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  return (
+    <LegalPage title="About Lorely" label="Our Story">
+      <LegalSection title="What is Lorely?">
+        <p>Lorely is a video sharing platform built specifically for AI-generated content. We are the home for creators who use tools like Veo 3, Seedance, Kling, Runway, Sora, and other generative AI platforms to produce cinematic, artistic, and experimental video content.</p>
+        <p style={{ marginTop: 12 }}>We built Lorely because we believe AI-generated video is one of the most exciting creative frontiers of our time — and creators deserve a dedicated space to share, discover, and grow their work.</p>
+      </LegalSection>
+      <LegalSection title="Our Mission">
+        <p>To build the world's leading destination for AI-generated video — a place where human creativity and artificial intelligence combine to tell stories that could not exist any other way.</p>
+      </LegalSection>
+      <LegalSection title="Who Can Use Lorely?">
+        <p>Lorely is open to anyone aged 13 and over. Creators can upload AI-generated video content, build a channel, grow a subscriber base, and — once eligible — earn revenue through our Creator Partner Program.</p>
+        <p style={{ marginTop: 12 }}>Viewers can watch, like, comment on, and share videos from creators around the world, completely free.</p>
+      </LegalSection>
+      <LegalSection title="Content Standards">
+        <p>All content on Lorely must be AI-generated or AI-assisted. Creators are required to disclose which AI tool was used to create their content. We believe in transparency — viewers have a right to know what they are watching and how it was made.</p>
+        <p style={{ marginTop: 12 }}>We do not allow content that is harmful, misleading, discriminatory, or illegal. Full content guidelines are set out in our Terms of Service.</p>
+      </LegalSection>
+      <LegalSection title="Age Restriction">
+        <p>Some content on Lorely is marked as age restricted by its creator. Age-restricted content is only accessible to users who are logged in and have verified they are 18 years of age or older. We take our obligations to protect younger users seriously.</p>
+      </LegalSection>
+      <LegalSection title="Contact Us">
+        <p>We would love to hear from you. Whether you have a question, a concern, a creator inquiry, or a partnership opportunity — reach out to us at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>.</p>
+        <p style={{ marginTop: 12 }}>Lorely is operated by Aigenix, based in Western Australia, Australia.</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
+function TermsPage() {
+  return (
+    <LegalPage title="Terms of Service" label="Legal">
+      <p style={{ marginBottom: 32, padding: "16px 20px", background: "var(--surface-raised)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)", fontSize: 13 }}>
+        Please read these Terms of Service carefully before using Lorely. By accessing or using the platform, you agree to be bound by these terms. If you do not agree, do not use Lorely.
+      </p>
+
+      <LegalSection title="1. Acceptance of Terms">
+        <p>These Terms of Service ("Terms") constitute a legally binding agreement between you and Aigenix ("we", "us", "our"), the operator of Lorely ("Platform"). By creating an account or using any part of the Platform, you confirm that you have read, understood, and agree to these Terms and our Privacy Policy.</p>
+        <p style={{ marginTop: 12 }}>We reserve the right to update these Terms at any time. Continued use of the Platform after changes are posted constitutes your acceptance of the updated Terms.</p>
+      </LegalSection>
+
+      <LegalSection title="2. Eligibility">
+        <p>You must be at least 13 years of age to create an account on Lorely. By registering, you represent and warrant that you meet this age requirement. Users under 18 are not permitted to access age-restricted content.</p>
+        <p style={{ marginTop: 12 }}>If you are under 18, you represent that your parent or legal guardian has reviewed and agreed to these Terms on your behalf.</p>
+      </LegalSection>
+
+      <LegalSection title="3. Account Registration">
+        <p>You must provide accurate, current, and complete information when creating your account, including your date of birth. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.</p>
+        <p style={{ marginTop: 12 }}>You must notify us immediately at {CONTACT_EMAIL} if you suspect any unauthorised use of your account. We are not liable for any loss or damage arising from your failure to maintain account security.</p>
+        <p style={{ marginTop: 12 }}>We reserve the right to suspend or terminate any account at our sole discretion, with or without notice, for any breach of these Terms.</p>
+      </LegalSection>
+
+      <LegalSection title="4. Content You Upload">
+        <p>Lorely is a platform for AI-generated and AI-assisted video content. By uploading content you confirm that:</p>
+        <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 2 }}>
+          <li>The content was created using artificial intelligence tools</li>
+          <li>You have disclosed which AI tool was used</li>
+          <li>You have the right to upload and share the content</li>
+          <li>The content does not infringe any third-party intellectual property rights</li>
+          <li>The content complies with all applicable laws, including Australian law</li>
+        </ul>
+        <p style={{ marginTop: 12 }}>By uploading content to Lorely, you grant Aigenix a worldwide, non-exclusive, royalty-free licence to host, store, display, reproduce, and distribute your content solely for the purpose of operating and promoting the Platform. You retain all ownership of your content.</p>
+      </LegalSection>
+
+      <LegalSection title="5. Prohibited Content">
+        <p>You must not upload, share, or promote content that:</p>
+        <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 2 }}>
+          <li>Depicts or sexualises minors in any way</li>
+          <li>Constitutes hate speech, harassment, or incitement to violence</li>
+          <li>Is defamatory, fraudulent, or intentionally misleading</li>
+          <li>Infringes copyright, trademarks, or other intellectual property rights</li>
+          <li>Contains malware, spam, or other harmful material</li>
+          <li>Depicts real identifiable individuals without their consent in a harmful or sexual manner</li>
+          <li>Violates any applicable Australian or international law or regulation</li>
+          <li>Presents AI-generated content as real footage in a way intended to deceive</li>
+        </ul>
+        <p style={{ marginTop: 12 }}>Violation of these rules may result in immediate content removal, account suspension, and where applicable, referral to law enforcement authorities.</p>
+      </LegalSection>
+
+      <LegalSection title="6. Age-Restricted Content">
+        <p>Creators may designate content as age-restricted (18+). Age-restricted content is only accessible to users who have verified they are 18 or older based on the date of birth provided at registration. You must not provide false information about your age. Doing so is a breach of these Terms and may result in account termination.</p>
+      </LegalSection>
+
+      <LegalSection title="7. Intellectual Property">
+        <p>All platform design, branding, software, and original content created by Aigenix is the intellectual property of Aigenix and is protected under Australian and international copyright law. You may not copy, reproduce, distribute, or create derivative works from our platform without our express written consent.</p>
+        <p style={{ marginTop: 12 }}>If you believe any content on Lorely infringes your intellectual property rights, please contact us at {CONTACT_EMAIL} with details of the alleged infringement.</p>
+      </LegalSection>
+
+      <LegalSection title="8. Monetisation and Creator Payments">
+        <p>Lorely operates a Creator Partner Program that allows eligible creators to earn revenue from their content through advertising and other means. Eligibility requirements, payment terms, and revenue share percentages are set by Aigenix and may change at any time with reasonable notice.</p>
+        <p style={{ marginTop: 12 }}>Aigenix makes no guarantee of earnings. All payments are subject to applicable Australian tax law. Creators are responsible for declaring and paying any applicable taxes on earnings received through the Platform.</p>
+      </LegalSection>
+
+      <LegalSection title="9. Advertising">
+        <p>Lorely may display advertising on the Platform. By using the Platform, you consent to the display of advertisements. We are not responsible for the content of third-party advertisements.</p>
+      </LegalSection>
+
+      <LegalSection title="10. Disclaimer of Warranties">
+        <p>Lorely is provided on an "as is" and "as available" basis without any warranties of any kind, either express or implied. We do not warrant that the Platform will be uninterrupted, error-free, or free of viruses or other harmful components.</p>
+        <p style={{ marginTop: 12 }}>To the maximum extent permitted by Australian consumer law, we disclaim all implied warranties including merchantability, fitness for a particular purpose, and non-infringement.</p>
+      </LegalSection>
+
+      <LegalSection title="11. Limitation of Liability">
+        <p>To the maximum extent permitted by law, Aigenix and its directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of or inability to use the Platform, including but not limited to loss of data, loss of revenue, or loss of goodwill.</p>
+        <p style={{ marginTop: 12 }}>Nothing in these Terms limits or excludes any rights you may have under the Australian Consumer Law that cannot be lawfully limited or excluded.</p>
+      </LegalSection>
+
+      <LegalSection title="12. Termination">
+        <p>We reserve the right to suspend or terminate your account and access to the Platform at any time, for any reason, with or without notice. Upon termination, your right to use the Platform ceases immediately. Content you have uploaded may be removed at our discretion.</p>
+        <p style={{ marginTop: 12 }}>You may terminate your account at any time by contacting us at {CONTACT_EMAIL}.</p>
+      </LegalSection>
+
+      <LegalSection title="13. Governing Law">
+        <p>These Terms are governed by the laws of Western Australia, Australia. Any disputes arising under or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts of Western Australia.</p>
+      </LegalSection>
+
+      <LegalSection title="14. Contact">
+        <p>For any questions regarding these Terms, please contact us at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>.</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
+function PrivacyPage() {
+  return (
+    <LegalPage title="Privacy Policy" label="Legal">
+      <p style={{ marginBottom: 32, padding: "16px 20px", background: "var(--surface-raised)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-default)", fontSize: 13 }}>
+        This Privacy Policy explains how Aigenix collects, uses, stores, and protects your personal information when you use Lorely. We are committed to protecting your privacy in accordance with the Australian Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).
+      </p>
+
+      <LegalSection title="1. Who We Are">
+        <p>Lorely is operated by Aigenix, based in Western Australia, Australia. References to "we", "us", or "our" in this policy refer to Aigenix. You can contact us at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>.</p>
+      </LegalSection>
+
+      <LegalSection title="2. Information We Collect">
+        <p>We collect the following categories of personal information:</p>
+        <p style={{ marginTop: 12, fontWeight: 500, color: "var(--text-primary)" }}>Information you provide directly:</p>
+        <ul style={{ marginTop: 6, paddingLeft: 20, lineHeight: 2 }}>
+          <li>Username and email address (at registration)</li>
+          <li>Date of birth (used solely for age verification)</li>
+          <li>Profile picture and banner image (if uploaded)</li>
+          <li>Video content, titles, descriptions, and tags you upload</li>
+          <li>Comments you post</li>
+          <li>Reports you submit</li>
+        </ul>
+        <p style={{ marginTop: 12, fontWeight: 500, color: "var(--text-primary)" }}>Information collected automatically:</p>
+        <ul style={{ marginTop: 6, paddingLeft: 20, lineHeight: 2 }}>
+          <li>IP address and approximate location</li>
+          <li>Browser type and device information</li>
+          <li>Pages visited and time spent on the Platform</li>
+          <li>Video view counts and interaction data (likes, comments)</li>
+        </ul>
+      </LegalSection>
+
+      <LegalSection title="3. How We Use Your Information">
+        <p>We use your personal information to:</p>
+        <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 2 }}>
+          <li>Create and manage your account</li>
+          <li>Verify your age and enforce content restrictions</li>
+          <li>Display your content and profile to other users</li>
+          <li>Process creator payments where applicable</li>
+          <li>Respond to your support requests</li>
+          <li>Monitor and moderate content for safety and compliance</li>
+          <li>Improve and develop the Platform</li>
+          <li>Send you important service-related communications</li>
+          <li>Comply with our legal obligations under Australian law</li>
+        </ul>
+        <p style={{ marginTop: 12 }}>We will not use your personal information for any purpose not described in this policy without your consent.</p>
+      </LegalSection>
+
+      <LegalSection title="4. How We Store Your Information">
+        <p>Your data is stored securely using Supabase, a cloud database provider with servers located in Singapore. Supabase complies with industry-standard security practices including encryption at rest and in transit.</p>
+        <p style={{ marginTop: 12 }}>Video files are hosted through Mux, a professional video infrastructure provider. Thumbnail images are stored in Supabase Storage.</p>
+        <p style={{ marginTop: 12 }}>We retain your data for as long as your account is active. If you delete your account, we will delete your personal information within 30 days, except where retention is required by law.</p>
+      </LegalSection>
+
+      <LegalSection title="5. Sharing Your Information">
+        <p>We do not sell your personal information to third parties. We may share your information with:</p>
+        <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 2 }}>
+          <li><strong style={{ color: "var(--text-primary)" }}>Service providers</strong> — Supabase (database), Mux (video hosting), and Stripe (payments) who process data on our behalf under strict data processing agreements</li>
+          <li><strong style={{ color: "var(--text-primary)" }}>Law enforcement</strong> — where required by Australian law or court order</li>
+          <li><strong style={{ color: "var(--text-primary)" }}>Advertising partners</strong> — anonymised and aggregated data only, never your personal identifying information</li>
+        </ul>
+        <p style={{ marginTop: 12 }}>All third-party service providers are required to handle your data securely and only for the purposes we specify.</p>
+      </LegalSection>
+
+      <LegalSection title="6. Cookies and Tracking">
+        <p>Lorely uses essential cookies and local storage to keep you logged in and remember your preferences. We may also use analytics tools to understand how users interact with the Platform. These tools may collect anonymised usage data.</p>
+        <p style={{ marginTop: 12 }}>If advertising is enabled on the Platform, third-party advertising partners (such as Google AdSense) may place cookies on your device to serve relevant advertisements. You can opt out of personalised advertising through your Google account settings.</p>
+      </LegalSection>
+
+      <LegalSection title="7. Your Rights">
+        <p>Under the Australian Privacy Act 1988 and Australian Privacy Principles, you have the right to:</p>
+        <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 2 }}>
+          <li>Access the personal information we hold about you</li>
+          <li>Request correction of inaccurate or outdated information</li>
+          <li>Request deletion of your personal information</li>
+          <li>Withdraw consent for processing where consent is the basis for processing</li>
+          <li>Lodge a complaint with the Office of the Australian Information Commissioner (OAIC)</li>
+        </ul>
+        <p style={{ marginTop: 12 }}>To exercise any of these rights, contact us at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>. We will respond within 30 days.</p>
+      </LegalSection>
+
+      <LegalSection title="8. Children's Privacy">
+        <p>Lorely is not directed at children under 13. We do not knowingly collect personal information from children under 13. If we become aware that a user is under 13, we will immediately delete their account and associated data.</p>
+        <p style={{ marginTop: 12 }}>Users aged 13–17 may use the Platform with appropriate parental consent. Age-restricted content (18+) is not accessible to users under 18. We use the date of birth provided at registration to enforce this restriction.</p>
+      </LegalSection>
+
+      <LegalSection title="9. Data Breaches">
+        <p>In the event of a data breach that is likely to result in serious harm to you, we will notify you and the Office of the Australian Information Commissioner (OAIC) as required under the Notifiable Data Breaches (NDB) scheme within 30 days of becoming aware of the breach.</p>
+      </LegalSection>
+
+      <LegalSection title="10. International Data Transfers">
+        <p>Some of your data may be processed outside of Australia by our third-party service providers (including Supabase in Singapore and Mux in the United States). We take steps to ensure these transfers are made in accordance with the Australian Privacy Principles and that your data receives adequate protection.</p>
+      </LegalSection>
+
+      <LegalSection title="11. Changes to This Policy">
+        <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by posting a notice on the Platform or by email. Your continued use of Lorely after changes are posted constitutes your acceptance of the updated policy.</p>
+      </LegalSection>
+
+      <LegalSection title="12. Complaints">
+        <p>If you have a complaint about how we have handled your personal information, please contact us first at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>. We will investigate and respond within 30 days.</p>
+        <p style={{ marginTop: 12 }}>If you are not satisfied with our response, you may lodge a complaint with the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-green)" }}>www.oaic.gov.au</a>.</p>
+      </LegalSection>
+
+      <LegalSection title="13. Contact">
+        <p>For any privacy-related questions or requests, contact us at <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: "var(--accent-green)" }}>{CONTACT_EMAIL}</a>.</p>
+        <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 13 }}>Aigenix · Western Australia, Australia</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
 function Sidebar({ page, setPage, currentUser }) {
   const links = [{ id: "home", icon: "⌂", label: "Home" }, { id: "trending", icon: "↑", label: "Trending" }, { id: "subscriptions", icon: "◎", label: "Subscriptions" }];
   return (
@@ -443,7 +702,15 @@ function Sidebar({ page, setPage, currentUser }) {
         <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>Share your Seedance, Veo, Kling and Gemini Omni creations with the world.</p>
       </div>
       <div style={{ display: "flex", gap: 14, padding: "6px 14px", flexWrap: "wrap" }}>
-        {["About", "Terms", "Privacy"].map(l => <span key={l} style={{ fontSize: 11, color: "var(--text-muted)", cursor: "pointer" }}>{l}</span>)}
+        {[["About","about"],["Terms","terms"],["Privacy","privacy"]].map(([l,id]) => (
+          <span key={id} onClick={() => setPage(id)} style={{ fontSize: 11, color: "var(--text-muted)", cursor: "pointer", transition: "color 200ms" }}
+            onMouseOver={e => e.target.style.color="var(--accent-green)"}
+            onMouseOut={e => e.target.style.color="var(--text-muted)"}
+          >{l}</span>
+        ))}
+      </div>
+      <div style={{ padding: "8px 14px 4px" }}>
+        <p style={{ fontSize: 10, color: "var(--text-muted)", opacity: 0.5 }}>Powered by <span style={{ color: "var(--accent-green)", opacity: 0.8 }}>Aigenix</span></p>
       </div>
     </div>
   );
@@ -801,6 +1068,9 @@ export default function Lorely() {
                 {page === "channel" && <ChannelPage currentUser={currentUser} videos={videos} />}
                 {page === "dashboard" && <DashboardPage currentUser={currentUser} videos={videos} onUploadClick={navToUpload} />}
                 {page === "admin" && <AdminPage onToast={showToast} />}
+                {page === "about" && <AboutPage />}
+                {page === "terms" && <TermsPage />}
+                {page === "privacy" && <PrivacyPage />}
               </>
             )}
           </div>
