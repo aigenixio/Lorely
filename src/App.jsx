@@ -67,6 +67,44 @@ const STYLES = `
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface-overlay); border: 1px solid var(--accent-green); border-radius: var(--radius-md); padding: 14px 20px; font-size: 14px; color: var(--text-primary); z-index: 2000; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; }
   @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   .legal-content * { text-align: left !important; }
+
+  /* ── MOBILE RESPONSIVE ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 20px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .sidebar { width: 220px; min-height: 100vh; flex-shrink: 0; }
+  .bottom-nav { display: none; }
+  .top-bar { height: 56px; padding: 0 24px; }
+  .main-pad { padding: 36px 28px 48px; }
+  .hero-text { padding: 40px 36px; }
+  .legal-pad { padding: 48px 60px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none !important; }
+    .bottom-nav { display: flex !important; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface-raised); border-top: 1px solid var(--border-default); z-index: 100; height: 60px; }
+    .bottom-nav button { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; color: var(--text-muted); font-size: 10px; font-family: var(--font-body); padding: 8px 4px; cursor: pointer; transition: color 200ms; }
+    .bottom-nav button.active { color: var(--accent-green); }
+    .bottom-nav button span.icon { font-size: 18px; line-height: 1; }
+    .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-img { display: none; }
+    .hero-text { padding: 28px 20px; }
+    .hero-text h1 { font-size: 22px !important; }
+    .top-bar { height: 52px; padding: 0 16px; }
+    .main-pad { padding: 16px 16px 80px; }
+    .legal-pad { padding: 24px 16px 80px; }
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal { border-radius: var(--radius-lg) !important; margin: 0 !important; width: 100% !important; }
+    .modal-overlay { padding: 16px 12px !important; align-items: flex-end !important; }
+    .search-bar { padding: 10px 16px !important; }
+    .video-table-row { grid-template-columns: auto 1fr auto !important; }
+    .upload-grid { grid-template-columns: 1fr !important; }
+  }
+
+  @media (max-width: 480px) {
+    .grid-4 { grid-template-columns: 1fr; gap: 12px; }
+    .hero-text h1 { font-size: 20px !important; }
+  }
 `;
 
 function Toast({ message, onDone }) {
@@ -111,7 +149,7 @@ function VideoCard({ video, onClick }) {
 
 function VideoGrid({ videos, onVideoClick }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: "20px" }}>
+    <div className="grid-4">
       {videos.map(v => <VideoCard key={v.id} video={v} onClick={onVideoClick} />)}
     </div>
   );
@@ -370,7 +408,7 @@ function UploadModal({ onClose, onUpload, currentUser, onToast }) {
         <div style={{ marginBottom: 16 }}><Label>Title *</Label><input placeholder="Give your creation a title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} /></div>
         <div style={{ marginBottom: 16 }}><Label>Description</Label><textarea placeholder="Describe your creation…" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
         <div style={{ marginBottom: 16 }}><Label>Tags</Label><input placeholder="cinematic, neon, dreamscape" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} /></div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+        <div style={{ className="upload-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:16 }}> }}>
           <div><Label>Category *</Label>
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
               <option value="">Select category</option>
@@ -424,7 +462,7 @@ const CONTACT_EMAIL = "lorely.help@gmail.com";
 
 function LegalPage({ title, label, children }) {
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "48px 60px" }}>
+    <div style={{ className="legal-pad" style={{ flex: 1, overflowY: "auto" }}>
       <span className="section-label" style={{ textAlign: "left", display: "block" }}>{label}</span>
       <h1 style={{ fontSize: 36, marginBottom: 8, textAlign: "left" }}>{title}</h1>
       <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 40, fontFamily: "var(--font-body)", textAlign: "left" }}>Effective date: {EFFECTIVE_DATE} · Lorely is operated by Aigenix, Western Australia, Australia</p>
@@ -680,7 +718,7 @@ function PrivacyPage() {
 function Sidebar({ page, setPage, currentUser }) {
   const links = [{ id: "home", icon: "⌂", label: "Home" }, { id: "trending", icon: "↑", label: "Trending" }, { id: "subscriptions", icon: "◎", label: "Subscriptions" }];
   return (
-    <div style={{ width: 220, background: "var(--surface-base)", borderRight: "1px solid var(--border-default)", padding: "20px 12px", display: "flex", flexDirection: "column", gap: 2, flexShrink: 0, minHeight: "100vh" }}>
+    <div className="sidebar" style={{ background: "var(--surface-base)", borderRight: "1px solid var(--border-default)", padding: "20px 12px", display: "flex", flexDirection: "column", gap: 2 }}>
       <div className="logo" style={{ padding: "8px 0 8px 14px", marginBottom: 16, fontSize: 26, textAlign: "left" }}>L<span className="logo-accent">o</span>rely</div>
       {links.map(l => (
         <button key={l.id} className={`nav-link${page === l.id ? " active" : ""}`} onClick={() => setPage(l.id)}>
@@ -726,12 +764,11 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
   return (
     <div style={{ flex: 1, overflowY: "auto" }}>
 
-      {/* Hero Banner — Bubble style */}
-      <div style={{ position: "relative", margin: "20px 24px 0", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 240 }}>
-          {/* Left — text */}
-          <div style={{ padding: "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
-            <h1 style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
+      {/* Hero Banner */}
+      <div style={{ position: "relative", margin: "16px 16px 0", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
+        <div className="hero-grid" style={{ minHeight: 220 }}>
+          <div className="hero-text" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
+            <h1 style={{ fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
               The Home of AI-Generated Media
             </h1>
             <p style={{ fontSize: 14, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 24, maxWidth: 340, textAlign: "left" }}>
@@ -743,8 +780,7 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
               </button>
             </div>
           </div>
-          {/* Right — image */}
-          <div style={{ position: "relative", overflow: "hidden" }}>
+          <div className="hero-img" style={{ position: "relative", overflow: "hidden" }}>
             <img
               src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0"
               alt="AI Generated Media"
@@ -758,19 +794,19 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
       </div>
 
       {/* Search bar */}
-      <div style={{ padding: "20px 24px 0", display: "flex", alignItems: "center", gap: 12 }}>
+      <div className="search-bar" style={{ padding: "16px 16px 0", display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ flex: 1, position: "relative" }}>
           <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 14 }}>⌕</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search AI-generated videos…" style={{ paddingLeft: 40, height: 40 }} />
         </div>
-        <select value={category} onChange={e => setCategory(e.target.value)} style={{ width: 180, height: 40 }}>
+        <select value={category} onChange={e => setCategory(e.target.value)} style={{ width: 160, height: 40, flexShrink: 0 }}>
           <option value="">All Categories</option>
           {CATEGORIES.map(c => <option key={c}>{c}</option>)}
         </select>
       </div>
 
       {/* Recent Uploads */}
-      <div style={{ padding: "28px 24px 48px" }}>
+      <div className="main-pad">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 20 }}>
           <div>
             <span className="section-label">Fresh from the community</span>
@@ -793,7 +829,7 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
 function TrendingPage({ videos, onVideoClick }) {
   const sorted = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
   return (
-    <div style={{ flex: 1, padding: "36px 28px 48px", overflowY: "auto" }}>
+    <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
         <div><span className="section-label">Most watched · Last 7 days</span><h1 style={{ fontSize: 32 }}>Trending Now</h1></div>
         <span className="badge-cat" style={{ fontSize: 12 }}>Last 7 Days</span>
@@ -806,7 +842,7 @@ function TrendingPage({ videos, onVideoClick }) {
 function SubscriptionsPage({ videos, onVideoClick, subscriptions }) {
   const subVideos = videos.filter(v => subscriptions.includes(v.creator_username || v.creator));
   return (
-    <div style={{ flex: 1, padding: "36px 28px 48px", overflowY: "auto" }}>
+    <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
       <div style={{ marginBottom: 28 }}><span className="section-label">Creators you follow</span><h1 style={{ fontSize: 32 }}>Your Feed</h1></div>
       {subVideos.length === 0 ? (
         <div style={{ textAlign: "center", padding: "80px 20px" }}>
@@ -863,12 +899,12 @@ function DashboardPage({ currentUser, videos, onUploadClick }) {
   };
 
   return (
-    <div style={{ flex: 1, padding: "36px 28px 48px", overflowY: "auto" }}>
+    <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
         <div><span className="section-label">Analytics</span><h1 style={{ fontSize: 32 }}>Creator Dashboard</h1></div>
         <button className="btn-primary" style={{ padding: "10px 22px", fontSize: 14 }} onClick={onUploadClick}>+ Upload New Video</button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 32 }}>
+      <div className="stat-grid">
         {[{ label: "Total Views", value: totalViews.toLocaleString() }, { label: "Subscribers", value: currentUser.subscribers || 0 }, { label: "Videos Uploaded", value: myVideos.length }].map(s => (
           <div key={s.label} className="stat-card">
             <p className="meta-label" style={{ marginBottom: 12 }}>{s.label}</p>
@@ -928,12 +964,12 @@ function AdminPage({ onToast }) {
   };
 
   return (
-    <div style={{ flex: 1, padding: "36px 28px 48px", overflowY: "auto" }}>
+    <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
         <div><span className="section-label">Moderation</span><h1 style={{ fontSize: 32 }}>Admin Panel</h1></div>
         <span className="badge-cat" style={{ color: "var(--accent-green)", borderColor: "var(--border-emphasis)" }}>Restricted Access</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 32 }}>
+      <div className="stat-grid">
         {[{ label: "Open Reports", value: reports.length }, { label: "Flagged Videos", value: stats.flagged }, { label: "Suspended Accounts", value: stats.suspended }].map(s => (
           <div key={s.label} className="stat-card">
             <p className="meta-label" style={{ marginBottom: 12 }}>{s.label}</p>
@@ -1036,7 +1072,7 @@ export default function Lorely() {
       <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
         <Sidebar page={page} setPage={setPage} currentUser={currentUser} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          <div style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", padding: "0 24px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
               <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
             </button>
@@ -1080,6 +1116,28 @@ export default function Lorely() {
       {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
       {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
+
+      {/* Mobile Bottom Nav */}
+      <nav className="bottom-nav">
+        {[
+          { id:"home", icon:"⌂", label:"Home" },
+          { id:"trending", icon:"↑", label:"Trending" },
+          { id:"upload", icon:"+", label:"Upload" },
+          { id:"subscriptions", icon:"◎", label:"Feed" },
+          { id:"channel", icon:"◉", label:"Profile" },
+        ].map(l => (
+          <button key={l.id} className={page === l.id ? "active" : ""}
+            onClick={() => {
+              if (l.id === "upload") { navToUpload(); return; }
+              setPage(l.id);
+            }}
+            style={ l.id === "upload" ? { color: "var(--accent-green)" } : {} }
+          >
+            <span className="icon">{l.icon}</span>
+            <span>{l.label}</span>
+          </button>
+        ))}
+      </nav>
     </>
   );
 }
