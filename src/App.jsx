@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+}
+
 const AI_TOOLS = ["Adobe Firefly","Gemini Omni","Grok Imagine","Hailuo 2.3","Kling 3.0","Luma Ray 3","Pika 2.5","PixVerse 5.5","Runway Gen 4.5","Seedance 2","Sora 2","Veo 3","Wan 2.6","Other"];
 const CATEGORIES = ["Cinematic & Film","Music Videos","Art & Animation","Gaming","Nature & Space","Comedy","Education","Experimental","Short Film","Abstract"];
 
@@ -148,8 +158,10 @@ function VideoCard({ video, onClick }) {
 }
 
 function VideoGrid({ videos, onVideoClick }) {
+  const isMobile = useIsMobile();
+  const cols = isMobile ? (window.innerWidth <= 480 ? 1 : 2) : 4;
   return (
-    <div className="grid-4">
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))`, gap: isMobile ? 12 : 20 }}>
       {videos.map(v => <VideoCard key={v.id} video={v} onClick={onVideoClick} />)}
     </div>
   );
@@ -755,6 +767,7 @@ function Sidebar({ page, setPage, currentUser }) {
 }
 
 function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
+  const isMobile = useIsMobile();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const filtered = videos.filter(v =>
@@ -765,58 +778,55 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
     <div style={{ flex: 1, overflowY: "auto" }}>
 
       {/* Hero Banner */}
-      <div style={{ position: "relative", margin: "16px 16px 0", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
-        <div className="hero-grid" style={{ minHeight: 220 }}>
-          <div className="hero-text" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
-            <h1 style={{ fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
+      <div style={{ margin: isMobile ? "12px 12px 0" : "16px 16px 0", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? 200 : 220 }}>
+          <div style={{ padding: isMobile ? "24px 20px" : "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
+            <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
               The Home of AI-Generated Media
             </h1>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 24, maxWidth: 340, textAlign: "left" }}>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 20, textAlign: "left" }}>
               Discover cinematic, machine-born creations from the world's most imaginative AI creators. Upload your own and join the future of generative video.
             </p>
-            <div style={{ display: "flex", gap: 12 }}>
-              <button className="btn-primary" style={{ padding: "11px 22px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
-                + Upload Video
-              </button>
+            <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
+              + Upload Video
+            </button>
+          </div>
+          {!isMobile && (
+            <div style={{ position: "relative", overflow: "hidden" }}>
+              <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="AI Generated Media" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.6) 100%)" }} />
             </div>
-          </div>
-          <div className="hero-img" style={{ position: "relative", overflow: "hidden" }}>
-            <img
-              src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0"
-              alt="AI Generated Media"
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.6) 100%)" }} />
-          </div>
+          )}
         </div>
       </div>
 
       {/* Search bar */}
-      <div className="search-bar" style={{ padding: "16px 16px 0", display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ padding: isMobile ? "12px 12px 0" : "16px 16px 0", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ flex: 1, position: "relative" }}>
           <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 14 }}>⌕</span>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search AI-generated videos…" style={{ paddingLeft: 40, height: 40 }} />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search videos…" style={{ paddingLeft: 40, height: 40 }} />
         </div>
-        <select value={category} onChange={e => setCategory(e.target.value)} style={{ width: 160, height: 40, flexShrink: 0 }}>
-          <option value="">All Categories</option>
-          {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-        </select>
+        {!isMobile && (
+          <select value={category} onChange={e => setCategory(e.target.value)} style={{ width: 160, height: 40, flexShrink: 0 }}>
+            <option value="">All Categories</option>
+            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+          </select>
+        )}
       </div>
 
       {/* Recent Uploads */}
-      <div className="main-pad">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 20 }}>
+      <div style={{ padding: isMobile ? "20px 12px 80px" : "28px 24px 48px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16 }}>
           <div>
             <span className="section-label">Fresh from the community</span>
-            <h2 style={{ fontSize: 26 }}>Recent Uploads</h2>
+            <h2 style={{ fontSize: isMobile ? 20 : 26 }}>Recent Uploads</h2>
           </div>
           <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>See all →</span>
         </div>
         {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 20px" }}>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--text-muted)", marginBottom: 10 }}>No videos yet</p>
+          <div style={{ textAlign: "center", padding: "40px 20px" }}>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: 20, color: "var(--text-muted)", marginBottom: 10 }}>No videos yet</p>
             <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Be the first to upload an AI-generated video.</p>
           </div>
         ) : <VideoGrid videos={filtered} onVideoClick={onVideoClick} />}
@@ -827,11 +837,12 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
 }
 
 function TrendingPage({ videos, onVideoClick }) {
+  const isMobile = useIsMobile();
   const sorted = [...videos].sort((a, b) => (b.views || 0) - (a.views || 0));
   return (
     <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
-        <div><span className="section-label">Most watched · Last 7 days</span><h1 style={{ fontSize: 32 }}>Trending Now</h1></div>
+        <div><span className="section-label">Most watched · Last 7 days</span><h1 style={{ fontSize: isMobile ? 24 : 32 }}>Trending Now</h1></div>
         <span className="badge-cat" style={{ fontSize: 12 }}>Last 7 Days</span>
       </div>
       {sorted.length === 0 ? <p style={{ color: "var(--text-muted)", fontFamily: "var(--font-display)", fontSize: 20 }}>No videos yet — be the first to upload!</p> : <VideoGrid videos={sorted} onVideoClick={onVideoClick} />}
@@ -840,13 +851,14 @@ function TrendingPage({ videos, onVideoClick }) {
 }
 
 function SubscriptionsPage({ videos, onVideoClick, subscriptions }) {
+  const isMobile = useIsMobile();
   const subVideos = videos.filter(v => subscriptions.includes(v.creator_username || v.creator));
   return (
     <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
-      <div style={{ marginBottom: 28 }}><span className="section-label">Creators you follow</span><h1 style={{ fontSize: 32 }}>Your Feed</h1></div>
+      <div style={{ marginBottom: 28 }}><span className="section-label">Creators you follow</span><h1 style={{ fontSize: isMobile ? 24 : 32 }}>Your Feed</h1></div>
       {subVideos.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "80px 20px" }}>
-          <p style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--text-muted)", marginBottom: 10 }}>Nothing here yet</p>
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)", marginBottom: 10 }}>Nothing here yet</p>
           <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Follow creators to see their latest work here.</p>
         </div>
       ) : <VideoGrid videos={subVideos} onVideoClick={onVideoClick} />}
@@ -889,6 +901,7 @@ function ChannelPage({ currentUser, videos }) {
 }
 
 function DashboardPage({ currentUser, videos, onUploadClick }) {
+  const isMobile = useIsMobile();
   const myVideos = videos.filter(v => (v.creator_username || v.creator) === currentUser?.username);
   const totalViews = myVideos.reduce((s, v) => s + (v.views || 0), 0);
   if (!currentUser) return <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}><p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Please log in to view your dashboard.</p></div>;
@@ -900,37 +913,35 @@ function DashboardPage({ currentUser, videos, onUploadClick }) {
 
   return (
     <div className="main-pad" style={{ flex: 1, overflowY: "auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
-        <div><span className="section-label">Analytics</span><h1 style={{ fontSize: 32 }}>Creator Dashboard</h1></div>
-        <button className="btn-primary" style={{ padding: "10px 22px", fontSize: 14 }} onClick={onUploadClick}>+ Upload New Video</button>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "flex-end", flexDirection: isMobile ? "column" : "row", gap: 12, marginBottom: 24 }}>
+        <div><span className="section-label">Analytics</span><h1 style={{ fontSize: isMobile ? 24 : 32 }}>Creator Dashboard</h1></div>
+        <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 13 }} onClick={onUploadClick}>+ Upload New Video</button>
       </div>
-      <div className="stat-grid">
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 10 : 16, marginBottom: 24 }}>
         {[{ label: "Total Views", value: totalViews.toLocaleString() }, { label: "Subscribers", value: currentUser.subscribers || 0 }, { label: "Videos Uploaded", value: myVideos.length }].map(s => (
-          <div key={s.label} className="stat-card">
-            <p className="meta-label" style={{ marginBottom: 12 }}>{s.label}</p>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: 40, fontWeight: 600, color: "var(--text-primary)" }}>{s.value}</p>
+          <div key={s.label} className="stat-card" style={{ padding: isMobile ? "14px 16px" : "20px 24px" }}>
+            <p className="meta-label" style={{ marginBottom: 8 }}>{s.label}</p>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: isMobile ? 28 : 40, fontWeight: 600, color: "var(--text-primary)" }}>{s.value}</p>
           </div>
         ))}
       </div>
       <div style={{ background: "var(--surface-raised)", border: "1px solid var(--border-default)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-        <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--border-default)", display: "flex", justifyContent: "space-between" }}>
-          <h3 style={{ fontSize: 20 }}>Your Videos</h3>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Manage and delete your uploads</span>
+        <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--border-default)" }}>
+          <h3 style={{ fontSize: 18 }}>Your Videos</h3>
         </div>
         {myVideos.length === 0 ? (
-          <div style={{ padding: "48px", textAlign: "center", color: "var(--text-muted)", fontFamily: "var(--font-display)", fontSize: 18 }}>No videos uploaded yet.</div>
+          <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)", fontFamily: "var(--font-display)", fontSize: 18 }}>No videos uploaded yet.</div>
         ) : myVideos.map((v, i) => (
-          <div key={v.id} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto auto auto", gap: 16, alignItems: "center", padding: "16px 24px", borderBottom: i < myVideos.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
-            <img src={v.thumbnail_url || v.thumbnail} alt={v.title} style={{ width: 72, height: 40, objectFit: "cover", borderRadius: "var(--radius-sm)" }} onError={e => { e.target.src = "https://picsum.photos/seed/fallback/72/40"; }} />
-            <div>
-              <p style={{ fontSize: 14, color: "var(--text-primary)", marginBottom: 5 }}>{v.title}</p>
-              <ToolBadge tool={v.ai_tool || v.tool} />
+          <div key={v.id} style={{ display: "flex", gap: 12, alignItems: "center", padding: "12px 18px", borderBottom: i < myVideos.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
+            <img src={v.thumbnail_url || v.thumbnail} alt={v.title} style={{ width: 60, height: 34, objectFit: "cover", borderRadius: "var(--radius-sm)", flexShrink: 0 }} onError={e => { e.target.src = "https://picsum.photos/seed/fallback/72/40"; }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 13, color: "var(--text-primary)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{v.title}</p>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <ToolBadge tool={v.ai_tool || v.tool} />
+                <span className="meta-label">{(v.views || 0).toLocaleString()} views</span>
+              </div>
             </div>
-            <span className="meta-label">{new Date(v.created_at || Date.now()).toLocaleDateString()}</span>
-            <span style={{ color: "var(--text-primary)", fontSize: 14, minWidth: 60, textAlign: "right" }}>{(v.views || 0).toLocaleString()}</span>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button className="btn-ghost" style={{ padding: "6px 12px", fontSize: 12, color: "#f87171" }} onClick={() => deleteVideo(v.id)}>Delete</button>
-            </div>
+            <button className="btn-ghost" style={{ padding: "6px 10px", fontSize: 12, color: "#f87171", flexShrink: 0 }} onClick={() => deleteVideo(v.id)}>Delete</button>
           </div>
         ))}
       </div>
@@ -1001,6 +1012,7 @@ function AdminPage({ onToast }) {
 }
 
 export default function Lorely() {
+  const isMobile = useIsMobile();
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [authModal, setAuthModal] = useState(null);
@@ -1070,7 +1082,7 @@ export default function Lorely() {
     <>
       <style>{STYLES}</style>
       <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
-        <Sidebar page={page} setPage={setPage} currentUser={currentUser} />
+        {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
@@ -1118,26 +1130,24 @@ export default function Lorely() {
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
       {/* Mobile Bottom Nav */}
-      <nav className="bottom-nav">
-        {[
-          { id:"home", icon:"⌂", label:"Home" },
-          { id:"trending", icon:"↑", label:"Trending" },
-          { id:"upload", icon:"+", label:"Upload" },
-          { id:"subscriptions", icon:"◎", label:"Feed" },
-          { id:"channel", icon:"◉", label:"Profile" },
-        ].map(l => (
-          <button key={l.id} className={page === l.id ? "active" : ""}
-            onClick={() => {
-              if (l.id === "upload") { navToUpload(); return; }
-              setPage(l.id);
-            }}
-            style={ l.id === "upload" ? { color: "var(--accent-green)" } : {} }
-          >
-            <span className="icon">{l.icon}</span>
-            <span>{l.label}</span>
-          </button>
-        ))}
-      </nav>
+      {isMobile && (
+        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", zIndex: 100, height: 60, display: "flex" }}>
+          {[
+            { id: "home", icon: "⌂", label: "Home" },
+            { id: "trending", icon: "↑", label: "Trending" },
+            { id: "upload", icon: "+", label: "Upload" },
+            { id: "subscriptions", icon: "◎", label: "Feed" },
+            { id: "channel", icon: "◉", label: "Profile" },
+          ].map(l => (
+            <button key={l.id}
+              onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: (page === l.id || (l.id === "upload" && showUpload)) ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
+              <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1, fontWeight: l.id === "upload" ? 300 : 400 }}>{l.icon}</span>
+              <span>{l.label}</span>
+            </button>
+          ))}
+        </nav>
+      )}
     </>
   );
 }
