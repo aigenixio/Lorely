@@ -11,6 +11,130 @@ function useIsMobile() {
   return isMobile;
 }
 
+function MobileGate() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+
+  useEffect(() => {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+    window.addEventListener("appinstalled", () => setInstalled(true));
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      if (result.outcome === "accepted") setInstalled(true);
+      setDeferredPrompt(null);
+    } else {
+      setShowInstructions(true);
+    }
+  };
+
+  const STYLES_MOBILE = `
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=DM+Sans:wght@400;500&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: 'DM Sans', sans-serif; }
+  `;
+
+  if (installed) {
+    return (
+      <>
+        <style>{STYLES_MOBILE}</style>
+        <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px", textAlign: "center" }}>
+          <div style={{ fontSize: 64, marginBottom: 20 }}>✅</div>
+          <h1 style={{ fontFamily: "Rajdhani, sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 12 }}>L<span style={{ color: "#00CDAB" }}>o</span>rely is installed!</h1>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 15, lineHeight: 1.7 }}>Find the Lorely icon on your home screen and open it to get started.</p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <style>{STYLES_MOBILE}</style>
+      <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "0 0 40px" }}>
+
+        {/* Hero image */}
+        <div style={{ width: "100%", height: 260, position: "relative", overflow: "hidden" }}>
+          <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="Lorely" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, #0a0a0a 100%)" }} />
+          <div style={{ position: "absolute", bottom: 24, left: 24 }}>
+            <h1 style={{ fontFamily: "Rajdhani, sans-serif", fontSize: 38, fontWeight: 700, lineHeight: 1 }}>L<span style={{ color: "#00CDAB" }}>o</span>rely</h1>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>The home of AI-generated media</p>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, padding: "32px 24px 0", width: "100%", maxWidth: 440 }}>
+
+          {/* Feature list */}
+          {[
+            { icon: "🎬", title: "Discover AI Video", desc: "Browse cinematic AI-generated videos from creators worldwide" },
+            { icon: "⬆️", title: "Upload Your Creations", desc: "Share videos made with Sora, Kling, Runway, Veo and more" },
+            { icon: "📡", title: "Follow Creators", desc: "Subscribe to channels and never miss a new upload" },
+            { icon: "💰", title: "Earn as a Creator", desc: "Monetise your AI content through our Creator Partner Program" },
+          ].map((f, i) => (
+            <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start", marginBottom: 24 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(0,205,171,0.12)", border: "1px solid rgba(0,205,171,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{f.icon}</div>
+              <div>
+                <p style={{ fontWeight: 500, fontSize: 15, marginBottom: 3, color: "#fff" }}>{f.title}</p>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Install button */}
+        <div style={{ width: "100%", maxWidth: 440, padding: "0 24px" }}>
+          {!showInstructions ? (
+            <>
+              <button onClick={handleInstall} style={{ width: "100%", padding: "16px", background: "#00CDAB", color: "#0a0a0a", border: "none", borderRadius: 14, fontSize: 17, fontWeight: 700, fontFamily: "DM Sans, sans-serif", cursor: "pointer", marginBottom: 12, letterSpacing: "0.3px" }}>
+                + Add Lorely to Home Screen
+              </button>
+              <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free to install · No App Store required</p>
+            </>
+          ) : (
+            <div style={{ background: "#141414", border: "1px solid rgba(0,205,171,0.3)", borderRadius: 14, padding: "20px" }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "#00CDAB", marginBottom: 12 }}>How to install Lorely:</p>
+              {isIOS ? (
+                <ol style={{ paddingLeft: 18, fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 2.2 }}>
+                  <li>Tap the <strong style={{ color: "#fff" }}>Share</strong> button at the bottom of your browser (the box with an arrow)</li>
+                  <li>Scroll down and tap <strong style={{ color: "#fff" }}>"Add to Home Screen"</strong></li>
+                  <li>Tap <strong style={{ color: "#fff" }}>"Add"</strong> in the top right corner</li>
+                  <li>Find the <strong style={{ color: "#fff" }}>Lorely</strong> icon on your home screen and open it</li>
+                </ol>
+              ) : isAndroid ? (
+                <ol style={{ paddingLeft: 18, fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 2.2 }}>
+                  <li>Tap the <strong style={{ color: "#fff" }}>three dots menu</strong> (⋮) in your browser</li>
+                  <li>Tap <strong style={{ color: "#fff" }}>"Add to Home screen"</strong> or <strong style={{ color: "#fff" }}>"Install app"</strong></li>
+                  <li>Tap <strong style={{ color: "#fff" }}>"Install"</strong> to confirm</li>
+                  <li>Find the <strong style={{ color: "#fff" }}>Lorely</strong> icon on your home screen and open it</li>
+                </ol>
+              ) : (
+                <ol style={{ paddingLeft: 18, fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 2.2 }}>
+                  <li>Tap your browser menu</li>
+                  <li>Tap <strong style={{ color: "#fff" }}>"Add to Home Screen"</strong> or <strong style={{ color: "#fff" }}>"Install"</strong></li>
+                  <li>Open the <strong style={{ color: "#fff" }}>Lorely</strong> icon from your home screen</li>
+                </ol>
+              )}
+              <button onClick={() => setShowInstructions(false)} style={{ width: "100%", marginTop: 16, padding: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, color: "rgba(255,255,255,0.6)", fontSize: 14, fontFamily: "DM Sans, sans-serif", cursor: "pointer" }}>Back</button>
+            </div>
+          )}
+        </div>
+
+        <p style={{ marginTop: 24, fontSize: 11, color: "rgba(255,255,255,0.2)" }}>Powered by Aigenix · lorely.help@gmail.com</p>
+      </div>
+    </>
+  );
+}
+
 const AI_TOOLS = ["Adobe Firefly","Gemini Omni","Grok Imagine","Hailuo 2.3","Kling 3.0","Luma Ray 3","Pika 2.5","PixVerse 5.5","Runway Gen 4.5","Seedance 2","Sora 2","Veo 3","Wan 2.6","Other"];
 const CATEGORIES = ["Cinematic & Film","Music Videos","Art & Animation","Gaming","Nature & Space","Comedy","Education","Experimental","Short Film","Abstract"];
 
@@ -1013,6 +1137,10 @@ function AdminPage({ onToast }) {
 
 export default function Lorely() {
   const isMobile = useIsMobile();
+
+  // Show mobile install page on phones/tablets
+  if (isMobile) return <MobileGate />;
+
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [authModal, setAuthModal] = useState(null);
