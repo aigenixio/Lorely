@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
-// Detect mobile BEFORE any React rendering
-const IS_MOBILE = /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+// Mobile detection via CSS classes - see index.css
+const IS_MOBILE = false; // CSS handles this now
 
 function useIsMobile() {
   return IS_MOBILE;
@@ -1133,11 +1133,6 @@ function AdminPage({ onToast }) {
 }
 
 export default function Lorely() {
-  const isMobile = useIsMobile();
-
-  // Show mobile install page on phones/tablets
-  if (isMobile) return <MobileGate />;
-
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [authModal, setAuthModal] = useState(null);
@@ -1206,7 +1201,14 @@ export default function Lorely() {
   return (
     <>
       <style>{STYLES}</style>
-      <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
+
+      {/* Mobile gate — CSS shows this on mobile, hides on desktop */}
+      <div className="mobile-gate">
+        <MobileGate />
+      </div>
+
+      {/* Desktop app — CSS shows this on desktop, hides on mobile */}
+      <div className="desktop-app" style={{ minHeight: "100vh", background: "var(--surface-base)" }}>
         {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
@@ -1253,26 +1255,9 @@ export default function Lorely() {
       {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
       {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
-
-      {/* Mobile Bottom Nav */}
-      {isMobile && (
-        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", zIndex: 100, height: 60, display: "flex" }}>
-          {[
-            { id: "home", icon: "⌂", label: "Home" },
-            { id: "trending", icon: "↑", label: "Trending" },
-            { id: "upload", icon: "+", label: "Upload" },
-            { id: "subscriptions", icon: "◎", label: "Feed" },
-            { id: "channel", icon: "◉", label: "Profile" },
-          ].map(l => (
-            <button key={l.id}
-              onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
-              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: (page === l.id || (l.id === "upload" && showUpload)) ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
-              <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1, fontWeight: l.id === "upload" ? 300 : 400 }}>{l.icon}</span>
-              <span>{l.label}</span>
-            </button>
-          ))}
-        </nav>
-      )}
+      </div>
+    </>
+  );
     </>
   );
 }
