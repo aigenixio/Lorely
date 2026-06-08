@@ -1,19 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+// Detect mobile BEFORE any React rendering
+const IS_MOBILE = /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+
 function useIsMobile() {
-  const isTouchDevice = /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => {
-      const touchDevice = /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
-      setIsMobile(touchDevice || window.innerWidth <= 1024);
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return isMobile;
+  return IS_MOBILE;
 }
 
 function MobileGate() {
