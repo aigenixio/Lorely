@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const isTouchDevice = /android|iphone|ipad|ipod|samsung|mobile|phone/i.test(navigator.userAgent);
+  const [isMobile, setIsMobile] = useState(isTouchDevice || window.innerWidth <= 1024);
   useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth <= 768);
+    const handler = () => setIsMobile(isTouchDevice || window.innerWidth <= 1024);
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
