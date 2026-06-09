@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
-// Mobile detection via CSS classes - see index.css
-// Detect mobile BEFORE any React rendering
-const IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-const IS_MOBILE = !IS_STANDALONE && typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
+// Detect if running as installed PWA (standalone mode)
+const IS_STANDALONE = 
+  window.matchMedia('(display-mode: standalone)').matches || 
+  window.matchMedia('(display-mode: fullscreen)').matches ||
+  window.navigator.standalone === true ||
+  document.referrer.includes('android-app://');
+
+// Detect mobile device - show install gate only in browser, not when installed
+const IS_MOBILE = !IS_STANDALONE && typeof navigator !== 'undefined' && 
+  /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
 
 function useIsMobile() {
   return IS_MOBILE;
@@ -459,7 +465,8 @@ function AuthModal({ mode, onClose, onAuth, onToast }) {
 
   return (
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal" style={{ maxWidth: 440, padding: 40, margin: "auto" }}>
+      <div className="modal" style={{ maxWidth: 440, padding: 40, margin: "auto", position: "relative" }}>
+        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "var(--surface-raised)", border: "1px solid var(--border-default)", color: "var(--text-muted)", width: 32, height: 32, borderRadius: "50%", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>×</button>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div className="logo" style={{ fontSize: 28, marginBottom: 6 }}>L<span className="logo-accent">o</span>rely</div>
           <p style={{ color: "var(--text-muted)", fontSize: 13 }}>The home of AI-created storytelling</p>
@@ -901,27 +908,47 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
     <div style={{ flex: 1, overflowY: "auto" }}>
 
       {/* Hero Banner */}
-      <div style={{ margin: isMobile ? "12px 12px 0" : "16px 16px 0", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? 200 : 220 }}>
-          <div style={{ padding: isMobile ? "24px 20px" : "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
-            <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
-              The Home of AI-Generated Media
-            </h1>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 20, textAlign: "left" }}>
-              Discover cinematic, machine-born creations from the world's most imaginative AI creators. Upload your own and join the future of generative video.
-            </p>
-            <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
-              + Upload Video
-            </button>
+      <div style={{ margin: isMobile ? "0" : "16px 16px 0", borderRadius: isMobile ? 0 : "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
+        {isMobile ? (
+          /* Mobile: image on top, text below */
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ position: "relative", width: "100%", height: 220, overflow: "hidden" }}>
+              <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="AI Generated Media" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #0a0a0a 100%)" }} />
+            </div>
+            <div style={{ padding: "20px 16px 24px", background: "#0a0a0a" }}>
+              <h1 style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.2, marginBottom: 10, color: "#fff", textAlign: "left" }}>
+                The Home of AI-Generated Media
+              </h1>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.6, marginBottom: 18, textAlign: "left" }}>
+                Discover cinematic, machine-born creations from the world's most imaginative AI creators.
+              </p>
+              <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
+                + Upload Video
+              </button>
+            </div>
           </div>
-          {!isMobile && (
+        ) : (
+          /* Desktop: side by side */
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 220 }}>
+            <div style={{ padding: "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
+              <h1 style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
+                The Home of AI-Generated Media
+              </h1>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 20, textAlign: "left" }}>
+                Discover cinematic, machine-born creations from the world's most imaginative AI creators. Upload your own and join the future of generative video.
+              </p>
+              <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
+                + Upload Video
+              </button>
+            </div>
             <div style={{ position: "relative", overflow: "hidden" }}>
               <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="AI Generated Media" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.6) 100%)" }} />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Search bar */}
@@ -1204,58 +1231,85 @@ export default function Lorely() {
     <>
       <style>{STYLES}</style>
 
-      {/* Show mobile gate on mobile devices */}
+      {/* Show mobile gate only in browser, not when installed as PWA */}
       {IS_MOBILE ? (
         <MobileGate />
       ) : (
-        /* Desktop app */
         <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
-        <Sidebar page={page} setPage={setPage} currentUser={currentUser} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-            <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
-              <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
-            </button>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {currentUser ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <Avatar src={currentUser.avatar_url} size={32} name={currentUser.username} />
-                  <span style={{ fontSize: 14, color: "var(--text-primary)" }}>{currentUser.username}</span>
-                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={handleLogout}>Log Out</button>
+
+          {/* Sidebar — hidden on mobile standalone PWA */}
+          {!IS_STANDALONE && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
+
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+
+            {/* Top bar */}
+            <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
+                <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
+              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                {currentUser ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <Avatar src={currentUser.avatar_url} size={32} name={currentUser.username} />
+                    {!IS_STANDALONE && <span style={{ fontSize: 14, color: "var(--text-primary)" }}>{currentUser.username}</span>}
+                    <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={handleLogout}>Log Out</button>
+                  </div>
+                ) : (
+                  <>
+                    <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("login")}>Log In</button>
+                    <button className="btn-primary" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Main content */}
+            <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+              {loading ? (
+                <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Loading…</p>
                 </div>
               ) : (
                 <>
-                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("login")}>Log In</button>
-                  <button className="btn-primary" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
+                  {page === "home" && <HomePage videos={videos} onVideoClick={handleVideoClick} onUpload={navToUpload} currentUser={currentUser} />}
+                  {page === "trending" && <TrendingPage videos={videos} onVideoClick={handleVideoClick} />}
+                  {page === "subscriptions" && <SubscriptionsPage videos={videos} onVideoClick={handleVideoClick} subscriptions={subscriptions} />}
+                  {page === "channel" && <ChannelPage currentUser={currentUser} videos={videos} />}
+                  {page === "dashboard" && <DashboardPage currentUser={currentUser} videos={videos} onUploadClick={navToUpload} />}
+                  {page === "admin" && <AdminPage onToast={showToast} />}
+                  {page === "about" && <AboutPage />}
+                  {page === "terms" && <TermsPage />}
+                  {page === "privacy" && <PrivacyPage />}
                 </>
               )}
             </div>
-          </div>
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-            {loading ? (
-              <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Loading…</p>
-              </div>
-            ) : (
-              <>
-                {page === "home" && <HomePage videos={videos} onVideoClick={handleVideoClick} onUpload={navToUpload} currentUser={currentUser} />}
-                {page === "trending" && <TrendingPage videos={videos} onVideoClick={handleVideoClick} />}
-                {page === "subscriptions" && <SubscriptionsPage videos={videos} onVideoClick={handleVideoClick} subscriptions={subscriptions} />}
-                {page === "channel" && <ChannelPage currentUser={currentUser} videos={videos} />}
-                {page === "dashboard" && <DashboardPage currentUser={currentUser} videos={videos} onUploadClick={navToUpload} />}
-                {page === "admin" && <AdminPage onToast={showToast} />}
-                {page === "about" && <AboutPage />}
-                {page === "terms" && <TermsPage />}
-                {page === "privacy" && <PrivacyPage />}
-              </>
+
+            {/* Bottom nav for standalone PWA on mobile */}
+            {IS_STANDALONE && (
+              <nav style={{ background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", flexShrink: 0 }}>
+                {[
+                  { id: "home", icon: "⌂", label: "Home" },
+                  { id: "trending", icon: "↑", label: "Trending" },
+                  { id: "upload", icon: "+", label: "Upload" },
+                  { id: "subscriptions", icon: "◎", label: "Feed" },
+                  { id: "channel", icon: "◉", label: "Profile" },
+                ].map(l => (
+                  <button key={l.id}
+                    onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
+                    style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: page === l.id ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
+                    <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1 }}>{l.icon}</span>
+                    <span>{l.label}</span>
+                  </button>
+                ))}
+              </nav>
             )}
           </div>
+
+          {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
+          {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
+          {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
+          {toast && <Toast message={toast} onDone={() => setToast(null)} />}
         </div>
-        {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
-        {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
-        {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
-        {toast && <Toast message={toast} onDone={() => setToast(null)} />}
-      </div>
       )}
     </>
   );
