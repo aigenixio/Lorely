@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 // Mobile detection via CSS classes - see index.css
-const IS_MOBILE = false; // CSS handles this now
+const IS_MOBILE = typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
 
 function useIsMobile() {
   return IS_MOBILE;
@@ -1202,14 +1202,13 @@ export default function Lorely() {
     <>
       <style>{STYLES}</style>
 
-      {/* Mobile gate — CSS shows this on mobile, hides on desktop */}
-      <div className="mobile-gate">
+      {/* Show mobile gate on mobile devices */}
+      {IS_MOBILE ? (
         <MobileGate />
-      </div>
-
-      {/* Desktop app — CSS shows this on desktop, hides on mobile */}
-      <div className="desktop-app" style={{ minHeight: "100vh", background: "var(--surface-base)" }}>
-        {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
+      ) : (
+        /* Desktop app */
+        <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
+        <Sidebar page={page} setPage={setPage} currentUser={currentUser} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
@@ -1250,11 +1249,12 @@ export default function Lorely() {
             )}
           </div>
         </div>
+        {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
+        {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
+        {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
+        {toast && <Toast message={toast} onDone={() => setToast(null)} />}
       </div>
-      {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
-      {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
-      {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
-      {toast && <Toast message={toast} onDone={() => setToast(null)} />}
+      )}
     </>
   );
 }
