@@ -13,7 +13,7 @@ const IS_MOBILE = !IS_STANDALONE && typeof navigator !== 'undefined' &&
   /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
 
 function useIsMobile() {
-  return IS_MOBILE;
+  return IS_MOBILE || IS_STANDALONE;
 }
 
 function MobileGate() {
@@ -1244,9 +1244,15 @@ export default function Lorely() {
 
             {/* Top bar */}
             <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
-                <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
-              </button>
+              {IS_STANDALONE ? (
+                /* Mobile PWA — show logo on left */
+                <div className="logo" style={{ fontSize: 22, padding: "0 4px" }}>L<span className="logo-accent">o</span>rely</div>
+              ) : (
+                /* Desktop — show upload button on left */
+                <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
+                  <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
+                </button>
+              )}
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 {currentUser ? (
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1284,9 +1290,9 @@ export default function Lorely() {
               )}
             </div>
 
-            {/* Bottom nav for standalone PWA on mobile */}
+            {/* Bottom nav — fixed to bottom of screen on standalone PWA */}
             {IS_STANDALONE && (
-              <nav style={{ background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", flexShrink: 0 }}>
+              <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", zIndex: 200 }}>
                 {[
                   { id: "home", icon: "⌂", label: "Home" },
                   { id: "trending", icon: "↑", label: "Trending" },
