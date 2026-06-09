@@ -541,7 +541,7 @@ function UploadModal({ onClose, onUpload, currentUser, onToast }) {
         <div style={{ marginBottom: 16 }}><Label>Title *</Label><input placeholder="Give your creation a title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} /></div>
         <div style={{ marginBottom: 16 }}><Label>Description</Label><textarea placeholder="Describe your creation…" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
         <div style={{ marginBottom: 16 }}><Label>Tags</Label><input placeholder="cinematic, neon, dreamscape" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} /></div>
-        <div style={{ className="upload-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:16 }}> }}>
+        <div className="upload-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:16 }}>
           <div><Label>Category *</Label>
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
               <option value="">Select category</option>
