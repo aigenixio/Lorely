@@ -595,7 +595,7 @@ const CONTACT_EMAIL = "lorely.help@gmail.com";
 
 function LegalPage({ title, label, children }) {
   return (
-    <div style={{ className="legal-pad" style={{ flex: 1, overflowY: "auto" }}>
+    <div className="legal-pad" style={{ flex: 1, overflowY: "auto" }}>
       <span className="section-label" style={{ textAlign: "left", display: "block" }}>{label}</span>
       <h1 style={{ fontSize: 36, marginBottom: 8, textAlign: "left" }}>{title}</h1>
       <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 40, fontFamily: "var(--font-body)", textAlign: "left" }}>Effective date: {EFFECTIVE_DATE} · Lorely is operated by Aigenix, Western Australia, Australia</p>
@@ -1255,9 +1255,6 @@ export default function Lorely() {
       {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
       {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
-      </div>
-    </>
-  );
     </>
   );
 }
