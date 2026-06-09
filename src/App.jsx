@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 // Mobile detection via CSS classes - see index.css
-const IS_MOBILE = typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
+// Detect mobile BEFORE any React rendering
+const IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const IS_MOBILE = !IS_STANDALONE && typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
 
 function useIsMobile() {
   return IS_MOBILE;
