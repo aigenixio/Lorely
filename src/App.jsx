@@ -1157,7 +1157,9 @@ function AdminPage({ onToast }) {
   );
 }
 
+
 export default function Lorely() {
+  const isMobile = useIsMobile();
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [authModal, setAuthModal] = useState(null);
@@ -1170,10 +1172,7 @@ export default function Lorely() {
 
   const showToast = (msg) => setToast(msg);
 
-  useEffect(() => {
-    loadVideos();
-    checkSession();
-  }, []);
+  useEffect(() => { loadVideos(); checkSession(); }, []);
 
   const checkSession = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -1196,11 +1195,11 @@ export default function Lorely() {
     if (!currentUser) { setAuthModal("login"); return; }
     if (subscriptions.includes(creator)) {
       setSubscriptions(prev => prev.filter(s => s !== creator));
-      showToast(`Unfollowed ${creator}`);
+      showToast("Unfollowed " + creator);
     } else {
       setSubscriptions(prev => [...prev, creator]);
       await supabase.from("subscriptions").insert({ subscriber_id: currentUser.id, creator_username: creator });
-      showToast(`Now following ${creator}!`);
+      showToast("Now following " + creator + "!");
     }
   };
 
@@ -1221,51 +1220,54 @@ export default function Lorely() {
     showToast("Logged out.");
   };
 
-  const navToUpload = () => { if (!currentUser) { setAuthModal("signup"); return; } setShowUpload(true); };
+  const navToUpload = () => {
+    if (!currentUser) { setAuthModal("signup"); return; }
+    setShowUpload(true);
+  };
 
   return (
     <>
       <style>{STYLES}</style>
+
       <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
 
-        {/* Sidebar — only on desktop */}
-        {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
+        {!isMobile && (
+          <Sidebar page={page} setPage={setPage} currentUser={currentUser} />
+        )}
 
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
 
-          {/* Top bar */}
-          <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", padding: "0 16px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexShrink: 0 }}>
             {isMobile ? (
-              <div className="logo" style={{ fontSize: 22, padding: "0 4px" }}>L<span className="logo-accent">o</span>rely</div>
+              <div className="logo" style={{ fontSize: 20 }}>L<span className="logo-accent">o</span>rely</div>
             ) : (
-              <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
-                <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
+              <button className="btn-primary" style={{ fontSize: 13, padding: "8px 16px", display: "flex", alignItems: "center", gap: 6 }} onClick={navToUpload}>
+                + Upload Video
               </button>
             )}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {currentUser ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <Avatar src={currentUser.avatar_url} size={32} name={currentUser.username} />
-                  {!isMobile && <span style={{ fontSize: 14, color: "var(--text-primary)" }}>{currentUser.username}</span>}
-                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={handleLogout}>Log Out</button>
-                </div>
+                <>
+                  <Avatar src={currentUser.avatar_url} size={30} name={currentUser.username} />
+                  {!isMobile && <span style={{ fontSize: 13, color: "var(--text-primary)" }}>{currentUser.username}</span>}
+                  <button className="btn-ghost" style={{ fontSize: 12, padding: "6px 12px" }} onClick={handleLogout}>Log Out</button>
+                </>
               ) : (
                 <>
-                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("login")}>Log In</button>
-                  <button className="btn-primary" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
+                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={() => setAuthModal("login")}>Log In</button>
+                  <button className="btn-primary" style={{ fontSize: 13, padding: "7px 14px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
                 </>
               )}
             </div>
           </div>
 
-          {/* Main content */}
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
             {loading ? (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Loading…</p>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: 20, color: "var(--text-muted)" }}>Loading…</p>
               </div>
             ) : (
-              <>
+              <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
                 {page === "home" && <HomePage videos={videos} onVideoClick={handleVideoClick} onUpload={navToUpload} currentUser={currentUser} />}
                 {page === "trending" && <TrendingPage videos={videos} onVideoClick={handleVideoClick} />}
                 {page === "subscriptions" && <SubscriptionsPage videos={videos} onVideoClick={handleVideoClick} subscriptions={subscriptions} />}
@@ -1275,13 +1277,12 @@ export default function Lorely() {
                 {page === "about" && <AboutPage />}
                 {page === "terms" && <TermsPage />}
                 {page === "privacy" && <PrivacyPage />}
-              </>
+              </div>
             )}
           </div>
 
-          {/* Bottom nav — mobile only */}
           {isMobile && (
-            <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", zIndex: 200 }}>
+            <nav style={{ background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", flexShrink: 0 }}>
               {[
                 { id: "home", icon: "⌂", label: "Home" },
                 { id: "trending", icon: "↑", label: "Trending" },
@@ -1291,8 +1292,8 @@ export default function Lorely() {
               ].map(l => (
                 <button key={l.id}
                   onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
-                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: page === l.id ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
-                  <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1 }}>{l.icon}</span>
+                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: page === l.id ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", cursor: "pointer" }}>
+                  <span style={{ fontSize: l.id === "upload" ? 20 : 16, lineHeight: 1 }}>{l.icon}</span>
                   <span>{l.label}</span>
                 </button>
               ))}
