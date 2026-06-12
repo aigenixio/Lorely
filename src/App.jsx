@@ -906,45 +906,39 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
   return (
     <div style={{ flex: 1, overflowY: "auto" }}>
 
-      {/* Hero Banner */}
-      <div style={{ margin: isMobile ? "0" : "16px 16px 0", borderRadius: isMobile ? 0 : "var(--radius-lg)", overflow: "hidden", background: "#111" }}>
-        {isMobile ? (
-          /* Mobile: image on top, text below */
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ position: "relative", width: "100%", height: 220, overflow: "hidden" }}>
-              <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="AI Generated Media" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, #0a0a0a 100%)" }} />
-            </div>
-            <div style={{ padding: "20px 16px 24px", background: "#0a0a0a" }}>
-              <h1 style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.2, marginBottom: 10, color: "#fff", textAlign: "left" }}>
-                The Home of AI-Generated Media
-              </h1>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.6, marginBottom: 0, textAlign: "left" }}>
-                Discover cinematic, machine-born creations from the world's most imaginative AI creators.
-              </p>
-            </div>
-          </div>
-        ) : (
-          /* Desktop: side by side */
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 220 }}>
-            <div style={{ padding: "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", background: "linear-gradient(135deg, #0a0a0a 0%, #141414 100%)" }}>
-              <h1 style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
-                The Home of AI-Generated Media
-              </h1>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.7, marginBottom: 20, textAlign: "left" }}>
-                Discover cinematic, machine-born creations from the world's most imaginative AI creators. Upload your own and join the future of generative video.
-              </p>
-              <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
-                + Upload Video
-              </button>
-            </div>
-            <div style={{ position: "relative", overflow: "hidden" }}>
-              <img src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0" alt="AI Generated Media" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.6) 100%)" }} />
-            </div>
-          </div>
-        )}
+      {/* Hero Banner — image behind text on both desktop and mobile */}
+      <div style={{
+        position: "relative",
+        margin: isMobile ? "0" : "16px 16px 0",
+        borderRadius: isMobile ? 0 : "var(--radius-lg)",
+        overflow: "hidden",
+        minHeight: isMobile ? 280 : 320,
+        display: "flex",
+        alignItems: "flex-end",
+      }}>
+        {/* Background image */}
+        <img
+          src="https://images.unsplash.com/photo-1715615751025-e7ebe7f47eea?ixid=M3w2OTk3Mjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODA2Mjg1Mzh8&ixlib=rb-4.1.0"
+          alt="AI Generated Media"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={e => { e.target.src = "https://picsum.photos/seed/hero/800/400"; }}
+        />
+        {/* Dark tint overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.75) 100%)" }} />
+        {/* Text on top */}
+        <div style={{ position: "relative", zIndex: 2, padding: isMobile ? "24px 20px 28px" : "40px 40px 36px", maxWidth: isMobile ? "100%" : 560 }}>
+          <h1 style={{ fontSize: isMobile ? 26 : 36, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, color: "#fff", textAlign: "left" }}>
+            The Home of AI-Generated Media
+          </h1>
+          <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.80)", lineHeight: 1.7, marginBottom: isMobile ? 0 : 24, textAlign: "left", maxWidth: 440 }}>
+            Discover cinematic, machine-born creations from the world's most imaginative AI creators. Upload your own and join the future of generative video.
+          </p>
+          {!isMobile && (
+            <button className="btn-primary" style={{ padding: "11px 24px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
+              + Upload Video
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Search bar */}
