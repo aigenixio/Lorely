@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
-// Detect if running as installed PWA (standalone mode)
+// Show app directly on all devices - no install gate
 const IS_STANDALONE = 
   window.matchMedia('(display-mode: standalone)').matches || 
   window.matchMedia('(display-mode: fullscreen)').matches ||
   window.navigator.standalone === true ||
   document.referrer.includes('android-app://');
 
-// Detect mobile device - show install gate only in browser, not when installed
-const IS_MOBILE = !IS_STANDALONE && typeof navigator !== 'undefined' && 
+const IS_MOBILE = typeof navigator !== 'undefined' && 
   /android|iphone|ipad|ipod|samsung|mobile|phone|tablet/i.test(navigator.userAgent);
 
 function useIsMobile() {
@@ -920,12 +919,9 @@ function HomePage({ videos, onVideoClick, onUpload, currentUser }) {
               <h1 style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.2, marginBottom: 10, color: "#fff", textAlign: "left" }}>
                 The Home of AI-Generated Media
               </h1>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.6, marginBottom: 18, textAlign: "left" }}>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", lineHeight: 1.6, marginBottom: 0, textAlign: "left" }}>
                 Discover cinematic, machine-born creations from the world's most imaginative AI creators.
               </p>
-              <button className="btn-primary" style={{ padding: "10px 20px", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }} onClick={navToUpload}>
-                + Upload Video
-              </button>
             </div>
           </div>
         ) : (
@@ -1230,15 +1226,10 @@ export default function Lorely() {
   return (
     <>
       <style>{STYLES}</style>
+      <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
 
-      {/* Show mobile gate only in browser, not when installed as PWA */}
-      {IS_MOBILE ? (
-        <MobileGate />
-      ) : (
-        <div style={{ display: "flex", minHeight: "100vh", background: "var(--surface-base)" }}>
-
-          {/* Sidebar — hidden on mobile standalone PWA */}
-          {!IS_STANDALONE && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
+        {/* Sidebar — only on desktop */}
+        {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
 
           <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
 
@@ -1316,7 +1307,6 @@ export default function Lorely() {
           {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
           {toast && <Toast message={toast} onDone={() => setToast(null)} />}
         </div>
-      )}
     </>
   );
 }
