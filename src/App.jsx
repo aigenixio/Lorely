@@ -467,7 +467,7 @@ function AuthModal({ mode, onClose, onAuth, onToast }) {
       <div className="modal" style={{ maxWidth: 440, padding: 40, margin: "auto", position: "relative" }}>
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "var(--surface-raised)", border: "1px solid var(--border-default)", color: "var(--text-muted)", width: 32, height: 32, borderRadius: "50%", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>×</button>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div className="logo" style={{ fontSize: 28, marginBottom: 6 }}>L<span className="logo-accent">o</span>rely</div>
+          <img src="/logo.png" alt="Lorely" style={{ height: 38, marginBottom: 6, objectFit: "contain" }} />
           <p style={{ color: "var(--text-muted)", fontSize: 13 }}>The home of AI-created storytelling</p>
         </div>
         <div style={{ display: "flex", gap: 4, marginBottom: 28, background: "var(--surface-raised)", borderRadius: "var(--radius-md)", padding: 4 }}>
@@ -860,7 +860,9 @@ function Sidebar({ page, setPage, currentUser }) {
   const links = [{ id: "home", icon: "⌂", label: "Home" }, { id: "trending", icon: "↑", label: "Trending" }, { id: "subscriptions", icon: "◎", label: "Subscriptions" }];
   return (
     <div className="sidebar" style={{ background: "var(--surface-base)", borderRight: "1px solid var(--border-default)", padding: "20px 12px", display: "flex", flexDirection: "column", gap: 2 }}>
-      <div className="logo" style={{ padding: "8px 0 8px 14px", marginBottom: 16, fontSize: 26, textAlign: "left" }}>L<span className="logo-accent">o</span>rely</div>
+      <div style={{ padding: "8px 0 8px 14px", marginBottom: 16 }}>
+        <img src="/logo.png" alt="Lorely" style={{ height: 32, objectFit: "contain" }} />
+      </div>
       {links.map(l => (
         <button key={l.id} className={`nav-link${page === l.id ? " active" : ""}`} onClick={() => setPage(l.id)}>
           <span style={{ fontSize: 15, color: "inherit", lineHeight: 1 }}>{l.icon}</span>{l.label}
@@ -1233,7 +1235,7 @@ export default function Lorely() {
 
           <div style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", padding: "0 16px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexShrink: 0 }}>
             {isMobile ? (
-              <div className="logo" style={{ fontSize: 20 }}>L<span className="logo-accent">o</span>rely</div>
+              <img src="/logo.png" alt="Lorely" style={{ height: 28, objectFit: "contain" }} />
             ) : (
               <button className="btn-primary" style={{ fontSize: 13, padding: "8px 16px", display: "flex", alignItems: "center", gap: 6 }} onClick={navToUpload}>
                 + Upload Video
