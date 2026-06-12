@@ -1261,7 +1261,7 @@ export default function Lorely() {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", paddingBottom: isMobile ? 60 : 0 }}>
             {loading ? (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <p style={{ fontFamily: "var(--font-display)", fontSize: 20, color: "var(--text-muted)" }}>Loading…</p>
@@ -1282,7 +1282,7 @@ export default function Lorely() {
           </div>
 
           {isMobile && (
-            <nav style={{ background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", flexShrink: 0 }}>
+            <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", zIndex: 999 }}>
               {[
                 { id: "home", icon: "⌂", label: "Home" },
                 { id: "trending", icon: "↑", label: "Trending" },
