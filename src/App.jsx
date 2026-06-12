@@ -1231,82 +1231,81 @@ export default function Lorely() {
         {/* Sidebar — only on desktop */}
         {!isMobile && <Sidebar page={page} setPage={setPage} currentUser={currentUser} />}
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
 
-            {/* Top bar */}
-            <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              {IS_STANDALONE ? (
-                /* Mobile PWA — show logo on left */
-                <div className="logo" style={{ fontSize: 22, padding: "0 4px" }}>L<span className="logo-accent">o</span>rely</div>
-              ) : (
-                /* Desktop — show upload button on left */
-                <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
-                  <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
-                </button>
-              )}
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                {currentUser ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Avatar src={currentUser.avatar_url} size={32} name={currentUser.username} />
-                    {!IS_STANDALONE && <span style={{ fontSize: 14, color: "var(--text-primary)" }}>{currentUser.username}</span>}
-                    <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={handleLogout}>Log Out</button>
-                  </div>
-                ) : (
-                  <>
-                    <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("login")}>Log In</button>
-                    <button className="btn-primary" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Main content */}
-            <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-              {loading ? (
-                <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Loading…</p>
+          {/* Top bar */}
+          <div className="top-bar" style={{ background: "var(--surface-base)", borderBottom: "1px solid var(--border-default)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            {isMobile ? (
+              <div className="logo" style={{ fontSize: 22, padding: "0 4px" }}>L<span className="logo-accent">o</span>rely</div>
+            ) : (
+              <button className="btn-primary" style={{ fontSize: 13, padding: "8px 18px", display: "flex", alignItems: "center", gap: 7 }} onClick={navToUpload}>
+                <span style={{ fontSize: 18, lineHeight: 1, fontWeight: 300 }}>+</span> Upload Video
+              </button>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {currentUser ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <Avatar src={currentUser.avatar_url} size={32} name={currentUser.username} />
+                  {!isMobile && <span style={{ fontSize: 14, color: "var(--text-primary)" }}>{currentUser.username}</span>}
+                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 14px" }} onClick={handleLogout}>Log Out</button>
                 </div>
               ) : (
                 <>
-                  {page === "home" && <HomePage videos={videos} onVideoClick={handleVideoClick} onUpload={navToUpload} currentUser={currentUser} />}
-                  {page === "trending" && <TrendingPage videos={videos} onVideoClick={handleVideoClick} />}
-                  {page === "subscriptions" && <SubscriptionsPage videos={videos} onVideoClick={handleVideoClick} subscriptions={subscriptions} />}
-                  {page === "channel" && <ChannelPage currentUser={currentUser} videos={videos} />}
-                  {page === "dashboard" && <DashboardPage currentUser={currentUser} videos={videos} onUploadClick={navToUpload} />}
-                  {page === "admin" && <AdminPage onToast={showToast} />}
-                  {page === "about" && <AboutPage />}
-                  {page === "terms" && <TermsPage />}
-                  {page === "privacy" && <PrivacyPage />}
+                  <button className="btn-ghost" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("login")}>Log In</button>
+                  <button className="btn-primary" style={{ fontSize: 13, padding: "7px 16px" }} onClick={() => setAuthModal("signup")}>Sign Up</button>
                 </>
               )}
             </div>
+          </div>
 
-            {/* Bottom nav — fixed to bottom of screen on standalone PWA */}
-            {IS_STANDALONE && (
-              <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", zIndex: 200 }}>
-                {[
-                  { id: "home", icon: "⌂", label: "Home" },
-                  { id: "trending", icon: "↑", label: "Trending" },
-                  { id: "upload", icon: "+", label: "Upload" },
-                  { id: "subscriptions", icon: "◎", label: "Feed" },
-                  { id: "channel", icon: "◉", label: "Profile" },
-                ].map(l => (
-                  <button key={l.id}
-                    onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
-                    style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: page === l.id ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
-                    <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1 }}>{l.icon}</span>
-                    <span>{l.label}</span>
-                  </button>
-                ))}
-              </nav>
+          {/* Main content */}
+          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+            {loading ? (
+              <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-muted)" }}>Loading…</p>
+              </div>
+            ) : (
+              <>
+                {page === "home" && <HomePage videos={videos} onVideoClick={handleVideoClick} onUpload={navToUpload} currentUser={currentUser} />}
+                {page === "trending" && <TrendingPage videos={videos} onVideoClick={handleVideoClick} />}
+                {page === "subscriptions" && <SubscriptionsPage videos={videos} onVideoClick={handleVideoClick} subscriptions={subscriptions} />}
+                {page === "channel" && <ChannelPage currentUser={currentUser} videos={videos} />}
+                {page === "dashboard" && <DashboardPage currentUser={currentUser} videos={videos} onUploadClick={navToUpload} />}
+                {page === "admin" && <AdminPage onToast={showToast} />}
+                {page === "about" && <AboutPage />}
+                {page === "terms" && <TermsPage />}
+                {page === "privacy" && <PrivacyPage />}
+              </>
             )}
           </div>
 
-          {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
-          {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
-          {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
-          {toast && <Toast message={toast} onDone={() => setToast(null)} />}
+          {/* Bottom nav — mobile only */}
+          {isMobile && (
+            <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface-raised)", borderTop: "1px solid var(--border-default)", height: 60, display: "flex", zIndex: 200 }}>
+              {[
+                { id: "home", icon: "⌂", label: "Home" },
+                { id: "trending", icon: "↑", label: "Trending" },
+                { id: "upload", icon: "+", label: "Upload" },
+                { id: "subscriptions", icon: "◎", label: "Feed" },
+                { id: "channel", icon: "◉", label: "Profile" },
+              ].map(l => (
+                <button key={l.id}
+                  onClick={() => { if (l.id === "upload") { navToUpload(); return; } setPage(l.id); }}
+                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", color: page === l.id ? "var(--accent-green)" : "var(--text-muted)", fontSize: 10, fontFamily: "var(--font-body)", padding: "8px 4px", cursor: "pointer", transition: "color 200ms" }}>
+                  <span style={{ fontSize: l.id === "upload" ? 22 : 18, lineHeight: 1 }}>{l.icon}</span>
+                  <span>{l.label}</span>
+                </button>
+              ))}
+            </nav>
+          )}
+
         </div>
+      </div>
+
+      {selectedVideo && <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} currentUser={currentUser} onSubscribe={handleSubscribe} subscriptions={subscriptions} onToast={showToast} />}
+      {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onAuth={handleAuth} onToast={showToast} />}
+      {showUpload && currentUser && <UploadModal onClose={() => setShowUpload(false)} onUpload={handleUpload} currentUser={currentUser} onToast={showToast} />}
+      {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </>
   );
 }
